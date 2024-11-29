@@ -7,7 +7,7 @@ use http_body::Frame;
 use serde::Serialize;
 use volo_http::{
     body::Body,
-    response::ServerResponse,
+    response::Response,
     server::route::{any, get, Router},
     PathParams,
 };
@@ -37,14 +37,14 @@ async fn delay_handler(
     PrettyJson(req_info)
 }
 
-async fn stream_data_handler(PathParams(num): PathParams<usize>) -> ServerResponse {
+async fn stream_data_handler(PathParams(num): PathParams<usize>) -> Response {
     let stream = stream! {
         for _ in 0..num {
             yield Ok(Frame::data(Bytes::copy_from_slice(&[rand::random()])))
         }
     };
     let body = Body::from_stream(stream);
-    ServerResponse::builder()
+    Response::builder()
         .header(
             header::CONTENT_TYPE,
             mime::APPLICATION_OCTET_STREAM.essence_str(),
@@ -61,10 +61,7 @@ struct StreamJson {
     id: usize,
 }
 
-async fn stream_handler(
-    PathParams(num): PathParams<usize>,
-    req_info: RequestInfo,
-) -> ServerResponse {
+async fn stream_handler(PathParams(num): PathParams<usize>, req_info: RequestInfo) -> Response {
     let mut info = StreamJson { req_info, id: 0 };
     let stream = stream! {
         for i in 0..num {
@@ -74,7 +71,7 @@ async fn stream_handler(
         }
     };
     let body = Body::from_stream(stream);
-    ServerResponse::builder()
+    Response::builder()
         .header(header::CONTENT_TYPE, mime::APPLICATION_JSON.essence_str())
         .body(body)
         .unwrap_or_default()

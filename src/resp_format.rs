@@ -1,6 +1,6 @@
-use volo_http::{
-    json::Json,
-    server::route::{get, Router},
+use volo_http::server::{
+    extract::Json,
+    route::{get, Router},
 };
 
 const JSON_STR: &str = r#"{

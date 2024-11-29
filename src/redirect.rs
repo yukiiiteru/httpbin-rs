@@ -1,7 +1,7 @@
 use http::{header, StatusCode};
 use serde::Deserialize;
 use volo_http::{
-    request::ServerRequest,
+    request::Request,
     server::{
         extract::Query,
         route::{any, get, Router},
@@ -10,10 +10,7 @@ use volo_http::{
     PathParams,
 };
 
-async fn absolute_redirect_handler(
-    PathParams(num): PathParams<usize>,
-    req: ServerRequest,
-) -> Redirect {
+async fn absolute_redirect_handler(PathParams(num): PathParams<usize>, req: Request) -> Redirect {
     let host = req
         .headers()
         .get(header::HOST)

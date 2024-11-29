@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 volo = "0.10"
-volo-http = { version = "0.2", features = ["server", "query", "form", "json"] }
+volo-http = { version = "0.3", features = ["server", "query", "form", "json"] }
 motore = "0.4"
 
 async-stream = "0.3"
@@ -21,7 +21,7 @@ mime = "0.3"
 rand = "0.8"
 serde = { version = "1", features = ["derive"] }
 sonic-rs = "0.3"
-tokio = { version = "1", features = ["rt"] }
+tokio = { version = "1", features = ["rt", "rt-multi-thread"] }
 
 [profile.release]
 opt-level = 3

@@ -1,11 +1,10 @@
 use http::{header, header::HeaderMap, request::Parts, status::StatusCode};
-use hyper::body::Incoming;
 use mime::Mime;
 use serde::de::DeserializeOwned;
 use volo_http::{
     body::Body,
     context::ServerContext,
-    response::ServerResponse,
+    response::Response,
     server::{extract::FromRequest, IntoResponse},
 };
 
@@ -15,13 +14,13 @@ impl<T> IntoResponse for PrettyJson<T>
 where
     T: serde::Serialize,
 {
-    fn into_response(self) -> ServerResponse {
+    fn into_response(self) -> Response {
         let Ok(json) = sonic_rs::to_vec_pretty(&self.0) else {
             return StatusCode::INTERNAL_SERVER_ERROR.into_response();
         };
         let body = Body::from(json);
 
-        ServerResponse::builder()
+        Response::builder()
             .status(StatusCode::OK)
             .header(
                 http::header::CONTENT_TYPE,
@@ -35,7 +34,7 @@ where
 pub async fn try_deserialize<T>(
     cx: &mut ServerContext,
     parts: Parts,
-    body: Incoming,
+    body: Body,
 ) -> Result<T, String>
 where
     T: DeserializeOwned,

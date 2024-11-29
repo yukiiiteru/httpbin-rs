@@ -5,10 +5,10 @@ use http::{
     method::Method,
     request::Parts,
 };
-use hyper::body::Incoming;
 use serde::Serialize;
 use volo::context::Context;
 use volo_http::{
+    body::Body,
     context::ServerContext,
     error::ExtractBodyError,
     server::{
@@ -31,7 +31,7 @@ impl FromRequest for RequestData {
     async fn from_request(
         cx: &mut ServerContext,
         parts: Parts,
-        body: Incoming,
+        body: Body,
     ) -> Result<Self, Self::Rejection> {
         let res = match try_deserialize(cx, parts, body).await {
             Ok(json) => Self {
@@ -65,7 +65,7 @@ impl FromRequest for RequestInfo {
     async fn from_request(
         cx: &mut ServerContext,
         mut parts: Parts,
-        body: Incoming,
+        body: Body,
     ) -> Result<Self, Self::Rejection> {
         let host = parts
             .headers

@@ -4,7 +4,7 @@ use http::{header, status::StatusCode};
 use serde::Serialize;
 use volo::net::Address;
 use volo_http::{
-    request::ServerRequest,
+    request::Request,
     server::route::{get, Router},
 };
 
@@ -15,7 +15,7 @@ struct HeadersResponse {
     headers: BTreeMap<String, String>,
 }
 
-async fn headers_handler(req: ServerRequest) -> PrettyJson<HeadersResponse> {
+async fn headers_handler(req: Request) -> PrettyJson<HeadersResponse> {
     let (parts, _) = req.into_parts();
     let mut headers = BTreeMap::new();
     for (k, v) in parts.headers.into_iter() {
@@ -46,9 +46,7 @@ struct UserAgentResponse {
     user_agent: String,
 }
 
-async fn user_agent_handler(
-    req: ServerRequest,
-) -> Result<PrettyJson<UserAgentResponse>, StatusCode> {
+async fn user_agent_handler(req: Request) -> Result<PrettyJson<UserAgentResponse>, StatusCode> {
     let Some(user_agent) = req.headers().get(header::USER_AGENT) else {
         return Err(StatusCode::BAD_REQUEST);
     };
